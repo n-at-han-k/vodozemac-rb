@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    vodozemac (0.1.0)
+    vodozemac (0.1.1)
       gem_kit (~> 0.2)
       rb_sys (~> 0.9)
 
