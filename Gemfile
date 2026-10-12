@@ -11,7 +11,6 @@ group :test do
   gem "sus"
 end
 
-# The maintainer's half of gem_kit, which the published gem has no use for: one RubyGems command, `gem kit`, for bumping the version, writing and linting the changelog, listing the outstanding deprecations, releasing and tagging.
 group :release do
   gem "gem_kit-release"
 end
