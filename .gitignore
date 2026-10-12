@@ -1,0 +1,10 @@
+/.bundle/
+/pkg/
+/target/
+/tmp/
+/vendor/
+
+# `rake compile` installs the built object beside the library, which belongs to this machine's Ruby.
+/lib/vodozemac/*.so
+/lib/vodozemac/*.bundle
+/lib/vodozemac/*.dll

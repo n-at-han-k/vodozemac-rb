@@ -1,0 +1,57 @@
+# The package is named vodozemac, which RbSys::ExtensionTask requires: it looks
+# the package up by the name the Rakefile gives it, and names the built object
+# after it. So the crate it binds is renamed to vodozemac_core on the dependency
+# instead, which is how `use vodozemac_core::olm` refers to it throughout.
+#
+# Without the rename the two would collide: the extern prelude would hold the
+# dependency under the same name as this package.
+[package]
+name = "vodozemac"
+version = "0.1.0"
+edition = "2021"
+publish = false
+
+[lib]
+name = "vodozemac"
+crate-type = ["cdylib"]
+
+[dependencies]
+# magnus 0.8 is required for Ruby 4.0 C-API compatibility (0.7 fails to compile
+# against Ruby 4.0: rb_fiber_raise pointer mutability + RTypedData.typed_flag).
+#
+# 0.9 is required to cross-compile for arm-linux-musl. On 32-bit musl, bindgen
+# renders timespec's padding around tv_nsec as bitfield members, so magnus 0.8's
+# `From<Timespec> for timespec` struct literal fails with E0063 (missing fields
+# `_bitfield_1`, `_bitfield_align_1`). 0.9 builds the struct with mem::zeroed
+# and assigns the two fields instead.
+magnus = "0.9"
+
+# vodozemac 0.10.0 (2026-04-13), default features (libolm-compat).
+#
+# - 0.10 is the release that fixes the all-zero / non-contributory DH issue from
+#   Soatok's review (the proposed patch was deprecated `since = "0.10.0"`), so we
+#   pin >= 0.10 rather than 0.9.
+# - There is no `strict-signatures` feature in 0.10 (it existed pre-0.10; the
+#   related signature-verification hardening was resolved upstream).
+# - There is no `fuzzing` Cargo feature: vodozemac's MAC/signature bypass is
+#   gated behind `#[cfg(fuzzing)]`, only set by `cargo fuzz`
+#   (RUSTFLAGS=--cfg fuzzing). A normal `cargo build`/`rake compile` never
+#   enables it. Never build production artifacts with `cargo fuzz`.
+[dependencies.vodozemac_core]
+package = "vodozemac"
+version = "0.11"
+
+# `insecure-pk-encryption` gates the pk_encryption module, which is libolm's
+# PkEncryption. The name is upstream's warning that its MAC authenticates
+# nothing: libolm computed it over the empty string rather than the ciphertext,
+# and every implementation reproduces the bug for compatibility.
+#
+# It is enabled because it is not optional for Matrix: server-side key backup is
+# defined as `m.megolm_backup.v1.curve25519-aes-sha2`, which is exactly this
+# primitive. The alternative is reimplementing it, which is strictly worse. See
+# MSC4048 for the authenticated version, and the warning in the specification.
+#
+# `low-level-api` is deliberately NOT enabled. The one method behind it this
+# binding would want is Account::remove_one_time_key, and upstream says it is
+# rarely useful: create_inbound_session already consumes the key it used.
+features = ["insecure-pk-encryption"]
