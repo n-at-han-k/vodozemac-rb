@@ -8,3 +8,4 @@
 /lib/vodozemac/*.so
 /lib/vodozemac/*.bundle
 /lib/vodozemac/*.dll
+*.gem
