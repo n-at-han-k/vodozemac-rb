@@ -21,7 +21,7 @@
 
         gems = pkgs.bundlerEnv {
           name = "vodozemac-gems";
-          ruby = pkgs.ruby_4_0;
+          ruby = pkgs.ruby_3_4;
           gemfile = ./Gemfile;
           lockfile = ./Gemfile.lock;
           gemset = import ./gemset.nix;
@@ -40,7 +40,6 @@
             clang
             libclang
 
-            # license-eye, which reads .licenserc.yaml: `license-eye header check` verifies the notice every Ruby file opens with. It is Go rather than Ruby, so it comes from here rather than from the bundle.
             skywalking-eyes
           ];
 
