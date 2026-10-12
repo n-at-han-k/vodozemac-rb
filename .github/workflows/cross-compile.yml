@@ -17,6 +17,9 @@ on:
       - 'vodozemac.gemspec'
       - 'Rakefile'
       - '.github/workflows/cross-compile.yml'
+      # The loader and the version live here, and the version is what the platform gems are
+      # built as, so a bump has to rebuild them.
+      - 'lib/**'
   workflow_dispatch:
 
 permissions:

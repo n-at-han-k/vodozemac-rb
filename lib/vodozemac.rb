@@ -6,7 +6,13 @@
 require_relative "vodozemac/version"
 
 # The native extension, which is where every class in this module is defined.
-require_relative "vodozemac/vodozemac"
+#
+# A precompiled platform gem carries one object per Ruby ABI, which rake-compiler puts under lib/vodozemac/3.3, 3.4 and so on. The source gem compiles one object and installs it beside the library, which is also where `rake compile` puts it.
+begin
+  require_relative "vodozemac/#{RUBY_VERSION[/\d+\.\d+/]}/vodozemac"
+rescue LoadError
+  require_relative "vodozemac/vodozemac"
+end
 
 # Ruby bindings for vodozemac, the Rust Olm and Megolm implementation.
 #
